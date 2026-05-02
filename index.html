@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Truco Argentino 🃏</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --verde:#1a472a;--verde2:#2d6a4f;--verde3:#40916c;
+  --oro:#c9a84c;--oro2:#e8c97e;--crema:#f5f0e8;
+  --rojo:#8b1a1a;--text:#1a1a1a;--text2:#5a5a5a;
+  --card-bg:#fff8ee;--card-border:#c9a84c;
+  --shadow:0 8px 32px rgba(0,0,0,0.35);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--verde);min-height:100vh;color:var(--crema);overflow-x:hidden;}
+
+/* FONDO TAPETE */
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse at 30% 20%, rgba(64,145,108,.3) 0%, transparent 60%),
+  radial-gradient(ellipse at 70% 80%, rgba(26,71,42,.5) 0%, transparent 60%),
+  repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(255,255,255,.015) 20px,rgba(255,255,255,.015) 21px);
+z-index:0;}
+
+.app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:1rem 1rem 5rem;}
+
+/* HEADER */
+.hdr{text-align:center;padding:1rem 0 1.5rem;}
+.logo{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--oro);text-shadow:2px 2px 8px rgba(0,0,0,.5);letter-spacing:2px;}
+.logo span{color:var(--crema);}
+.score-bar{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:.75rem;}
+.score-side{text-align:center;}
+.score-name{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--oro2);margin-bottom:2px;}
+.score-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--crema);line-height:1;}
+.score-pts{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+.score-div{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--oro);opacity:.5;}
+.score-track{display:flex;gap:4px;justify-content:center;margin-top:6px;}
+.score-pip{width:12px;height:12px;border-radius:50%;border:2px solid var(--oro);transition:background .3s;}
+.score-pip.on{background:var(--oro);}
+
+/* MESA */
+.mesa{background:rgba(0,0,0,.25);border-radius:20px;border:2px solid rgba(201,168,76,.3);padding:1.25rem;margin-bottom:1rem;}
+
+/* CARTAS IA */
+.ia-zona{margin-bottom:1rem;}
+.zona-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;}
+.cartas-ia{display:flex;gap:8px;justify-content:center;}
+
+/* CARTA */
+.carta{
+  width:60px;height:88px;border-radius:8px;
+  background:var(--verde2);border:2px solid rgba(201,168,76,.4);
+  display:flex;align-items:center;justify-content:center;
+  cursor:default;position:relative;transition:all .2s;
+  box-shadow:2px 4px 12px rgba(0,0,0,.4);
+  flex-shrink:0;
+}
+.carta.dorso{
+  background:repeating-linear-gradient(135deg,var(--verde2),var(--verde2) 4px,var(--verde3) 4px,var(--verde3) 8px);
+}
+.carta.dorso::after{content:'🃏';font-size:1.4rem;opacity:.3;}
+.carta.jugable{cursor:pointer;border-color:var(--oro);}
+.carta.jugable:hover{transform:translateY(-12px) scale(1.05);border-color:var(--oro2);box-shadow:0 12px 24px rgba(0,0,0,.5);}
+.carta.jugada{opacity:.5;cursor:not-allowed;transform:none!important;}
+.carta.seleccionada{transform:translateY(-16px);border-color:var(--oro2);box-shadow:0 0 20px rgba(201,168,76,.6);}
+.carta-inner{width:100%;height:100%;border-radius:6px;background:var(--card-bg);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 4px;border:1px solid var(--card-border);}
+.carta-num{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;line-height:1;}
+.carta-palo{font-size:1.3rem;}
+.carta-num-bot{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;line-height:1;transform:rotate(180deg);}
+.carta-num.espada,.carta-num-bot.espada{color:#1a1a8b;}
+.carta-num.basto,.carta-num-bot.basto{color:#1a6b1a;}
+.carta-num.oro,.carta-num-bot.oro{color:#8b6b00;}
+.carta-num.copa,.carta-num-bot.copa{color:#8b1a1a;}
+
+/* MANO JUGADA */
+.mano-jugada{display:flex;justify-content:center;gap:20px;margin:10px 0;min-height:50px;align-items:center;}
+.carta-en-mesa{
+  width:44px;height:64px;border-radius:6px;background:var(--card-bg);
+  border:2px solid var(--card-border);display:flex;flex-direction:column;
+  align-items:center;justify-content:space-between;padding:3px;
+  box-shadow:2px 4px 10px rgba(0,0,0,.3);
+  animation:caerCarta .3s ease;
+}
+@keyframes caerCarta{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.carta-en-mesa .cn{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:900;}
+.carta-en-mesa .cp{font-size:1rem;}
+.carta-en-mesa.ganadora{border-color:#ffd700;box-shadow:0 0 12px rgba(255,215,0,.6);}
+.carta-en-mesa.perdedora{opacity:.5;}
+.mano-sep{color:rgba(255,255,255,.3);font-size:.8rem;font-weight:700;align-self:center;}
+
+/* RESULTADO MANO */
+.res-mano{display:flex;gap:6px;justify-content:center;margin:6px 0;}
+.rm-pip{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.3);font-size:10px;display:flex;align-items:center;justify-content:center;}
+.rm-pip.j{background:var(--oro);border-color:var(--oro);}
+.rm-pip.ia{background:var(--rojo);border-color:var(--rojo);}
+.rm-pip.empate{background:rgba(255,255,255,.3);}
+
+/* MIS CARTAS */
+.yo-zona{margin-top:10px;}
+.mis-cartas{display:flex;gap:10px;justify-content:center;}
+
+/* BOTONES ACCION */
+.acciones{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:1rem;}
+.btn-accion{
+  padding:9px 18px;border-radius:30px;border:2px solid;
+  font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;
+  transition:all .15s;letter-spacing:.03em;
+}
+.btn-truco{background:var(--rojo);color:#fff;border-color:#a02020;}
+.btn-truco:hover{background:#a02020;transform:scale(1.05);}
+.btn-envido{background:var(--azul, #1a3a6b);color:#fff;border-color:#122a52;background:#1a3a6b;}
+.btn-envido:hover{background:#122a52;transform:scale(1.05);}
+.btn-quiero{background:var(--verde3);color:#fff;border-color:var(--verde2);}
+.btn-quiero:hover{background:var(--verde2);transform:scale(1.05);}
+.btn-noquiero{background:#555;color:#fff;border-color:#333;}
+.btn-noquiero:hover{background:#333;transform:scale(1.05);}
+.btn-mazo{background:transparent;color:var(--oro);border-color:var(--oro);}
+.btn-mazo:hover{background:rgba(201,168,76,.15);transform:scale(1.05);}
+.btn-nueva{background:var(--oro);color:#1a1a1a;border-color:var(--oro2);font-size:14px;padding:11px 28px;}
+.btn-nueva:hover{background:var(--oro2);transform:scale(1.05);}
+.btn:disabled,.btn-accion:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
+
+/* LOG */
+.log{background:rgba(0,0,0,.3);border-radius:12px;padding:10px 14px;margin-top:.75rem;min-height:48px;max-height:100px;overflow-y:auto;border:1px solid rgba(255,255,255,.08);}
+.log-msg{font-size:12px;color:rgba(255,255,255,.75);line-height:1.6;padding:1px 0;}
+.log-msg.tuyo{color:var(--oro2);}
+.log-msg.ia{color:#ff9999;}
+.log-msg.sistema{color:rgba(255,255,255,.45);font-style:italic;}
+.log-msg.importante{color:#7fff7f;font-weight:800;}
+
+/* ESTADO */
+.estado-canto{
+  text-align:center;background:rgba(0,0,0,.4);border-radius:12px;
+  padding:.75rem 1rem;margin:.75rem 0;border:2px solid var(--oro);
+  animation:pulseGlow .8s infinite alternate;
+}
+@keyframes pulseGlow{from{box-shadow:0 0 8px rgba(201,168,76,.3)}to{box-shadow:0 0 20px rgba(201,168,76,.7)}}
+.estado-canto-txt{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--oro);margin-bottom:4px;}
+.estado-canto-sub{font-size:11px;color:rgba(255,255,255,.6);}
+
+/* PANTALLA INICIO */
+.inicio{text-align:center;padding:2rem 1rem;}
+.inicio-logo{font-family:'Playfair Display',serif;font-size:3rem;color:var(--oro);margin-bottom:.5rem;text-shadow:3px 3px 12px rgba(0,0,0,.5);}
+.inicio-sub{font-size:14px;color:rgba(255,255,255,.7);margin-bottom:2rem;line-height:1.6;}
+.inicio-card{background:rgba(0,0,0,.3);border-radius:16px;padding:1.5rem;margin-bottom:1rem;border:1px solid rgba(201,168,76,.3);}
+.inicio-card h3{font-family:'Playfair Display',serif;color:var(--oro);margin-bottom:.75rem;font-size:1.1rem;}
+.inicio-card p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;}
+.jerarquia{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:.5rem;}
+.jc{background:var(--card-bg);border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;color:var(--text);border:1px solid var(--card-border);}
+
+/* OVERLAY RESULTADO */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:100;display:none;}
+.overlay.on{display:flex;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.overlay-card{background:var(--verde);border-radius:20px;padding:2rem;text-align:center;border:3px solid var(--oro);box-shadow:var(--shadow);max-width:320px;width:90%;}
+.overlay-emoji{font-size:3.5rem;margin-bottom:.5rem;}
+.overlay-title{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--oro);margin-bottom:.5rem;}
+.overlay-sub{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:1.5rem;}
+
+/* TURNO */
+.turno-indicator{text-align:center;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.5rem;}
+.turno-indicator.activo{color:var(--oro2);}
+
+/* BADGE */
+.badge-mano{display:inline-block;background:rgba(201,168,76,.2);border:1px solid var(--oro);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:800;color:var(--oro);letter-spacing:.05em;text-transform:uppercase;}
+
+/* PUNTOS ENVIDO */
+.pts-envido{font-size:11px;color:rgba(255,255,255,.4);text-align:center;margin-top:4px;}
+
+@media(max-width:400px){
+  .carta{width:50px;height:74px;}
+  .logo{font-size:1.6rem;}
+  .score-num{font-size:1.5rem;}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div id="screen-inicio"></div>
+  <div id="screen-juego" style="display:none"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="overlay-emoji" id="ov-emoji">🏆</div>
+    <div class="overlay-title" id="ov-title">¡Ganaste!</div>
+    <div class="overlay-sub" id="ov-sub">Llegaste a 30 puntos</div>
+    <button class="btn-accion btn-nueva" onclick="initJuego()">Jugar de nuevo</button>
+  </div>
+</div>
+
+<script>
+// ===== MAZO =====
+// Jerarquía truco: 1E > 1B > 7E > 7O > 3 > 2 > 1C=1O > 12 > 11 > 10 > 7C=7B > 6 > 5 > 4
+var PALOS=['espada','basto','oro','copa'];
+var PALO_SIM={espada:'⚔️',basto:'🌿',oro:'💰',copa:'🏆'};
+var PALO_LETRA={espada:'E',basto:'B',oro:'O',copa:'C'};
+
+function getJerarquia(num,palo){
+  if(num===1&&palo==='espada')return 14;
+  if(num===1&&palo==='basto')return 13;
+  if(num===7&&palo==='espada')return 12;
+  if(num===7&&palo==='oro')return 11;
+  if(num===3)return 10;
+  if(num===2)return 9;
+  if(num===1)return 8; // copa u oro
+  if(num===12)return 7;
+  if(num===11)return 6;
+  if(num===10)return 5;
+  if(num===7)return 4; // copa o basto
+  if(num===6)return 3;
+  if(num===5)return 2;
+  if(num===4)return 1;
+  return 0;
+}
+
+function getEnvido(num,palo){
+  // Para envido: figuras (10,11,12) valen 0; resto valor nominal
+  if(num>=10)return 0;
+  return num;
+}
+
+function calcEnvido(cartas){
+  // Mejor envido con 2 cartas del mismo palo + 20
+  var mejor=0;
+  for(var i=0;i<cartas.length;i++){
+    for(var j=i+1;j<cartas.length;j++){
+      if(cartas[i].palo===cartas[j].palo){
+        var v=20+getEnvido(cartas[i].num,cartas[i].palo)+getEnvido(cartas[j].num,cartas[j].palo);
+        if(v>mejor)mejor=v;
+      }
+    }
+    // Una carta sola
+    var vs=getEnvido(cartas[i].num,cartas[i].palo);
+    if(vs>mejor)mejor=vs;
+  }
+  return mejor;
+}
+
+function crearMazo(){
+  var m=[];
+  var nums=[1,2,3,4,5,6,7,10,11,12];
+  PALOS.forEach(function(p){
+    nums.forEach(function(n){
+      m.push({num:n,palo:p,jer:getJerarquia(n,p)});
+    });
+  });
+  return m;
+}
+
+function shuffle(arr){
+  var a=arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+
+// ===== ESTADO =====
+var G={
+  ptsJ:0,ptsIA:0,
+  mano:0, // 0=jugador es mano, 1=ia es mano
+  turno:0, // 0=jugador, 1=ia
+  cartasJ:[],cartasIA:[],
+  jugadasJ:[null,null,null], // carta jugada por mano (index en cartas)
+  jugadasIA:[null,null,null],
+  manosGanadasJ:0,manosGanadasIA:0,manosEmpatadas:0,
+  manoActual:0, // 0,1,2
+  // Truco
+  estadoTruco:0, // 0=no cantado,1=truco,2=retruco,3=vale4
+  trucoCantadoPor:null, // 'j' o 'ia'
+  trucoPendiente:false,
+  // Envido
+  estadoEnvido:0, // 0=no,1=envido,2=envido+envido,3=realenvido,4=faltaenvido
+  envidoCantadoPor:null,
+  envidoPendiente:false,
+  envidoJugado:false,
+  // Fase
+  fase:'inicio', // inicio|jugando|esperando_respuesta_truco|esperando_respuesta_envido|fin_mano|fin_partida
+  partidaTerminada:false,
+};
+
+function log(msg,tipo){
+  var el=document.getElementById('log-area');
+  if(!el)return;
+  var d=document.createElement('div');
+  d.className='log-msg '+(tipo||'');
+  d.textContent=msg;
+  el.appendChild(d);
+  el.scrollTop=el.scrollHeight;
+}
+
+// ===== RENDER CARTA =====
+function htmlCarta(carta,idx,jugable,jugada,seleccionada,dorso){
+  if(dorso){
+    return '<div class="carta dorso"></div>';
+  }
+  var cls='carta';
+  if(jugable)cls+=' jugable';
+  if(jugada)cls+=' jugada';
+  if(seleccionada)cls+=' seleccionada';
+  var paloClass=carta.palo;
+  var onclick=jugable&&!jugada?'onclick="jugarCarta('+idx+')"':'';
+  return '<div class="'+cls+'" '+onclick+'>'+
+    '<div class="carta-inner">'+
+      '<span class="carta-num '+paloClass+'">'+carta.num+'</span>'+
+      '<span class="carta-palo">'+PALO_SIM[carta.palo]+'</span>'+
+      '<span class="carta-num-bot '+paloClass+'">'+carta.num+'</span>'+
+    '</div>'+
+  '</div>';
+}
+
+function htmlCartaMesa(carta,cls){
+  return '<div class="carta-en-mesa '+(cls||'')+'">'+
+    '<span class="cn" style="color:'+(carta.palo==='espada'?'#1a1a8b':carta.palo==='basto'?'#1a6b1a':carta.palo==='oro'?'#8b6b00':'#8b1a1a')+'">'+carta.num+'</span>'+
+    '<span class="cp">'+PALO_SIM[carta.palo]+'</span>'+
+  '</div>';
+}
+
+// ===== RENDER PRINCIPAL =====
+function render(){
+  var el=document.getElementById('screen-juego');
+  if(!el)return;
+
+  var miTurno=G.turno===0&&!G.trucoPendiente&&!G.envidoPendiente&&G.fase==='jugando';
+  var puedeJugar=miTurno;
+
+  // Cartas IA (dorso si no las jugó, visible si las jugó)
+  var cartasIAhtml='';
+  G.cartasIA.forEach(function(c,i){
+    var jugada=G.jugadasIA[G.manoActual]===i||(G.manoActual>0&&G.jugadasIA.slice(0,G.manoActual).includes(i));
+    // Simplificado: mostrar dorso siempre para cartas no jugadas en mesa
+    cartasIAhtml+=htmlCarta(c,i,false,false,false,true);
+  });
+
+  // Manos jugadas
+  var manosHtml='';
+  for(var m=0;m<=Math.min(G.manoActual,2);m++){
+    var cj=G.jugadasJ[m]!==null?G.cartasJ[G.jugadasJ[m]]:null;
+    var ci=G.jugadasIA[m]!==null?G.cartasIA[G.jugadasIA[m]]:null;
+    if(cj||ci){
+      var resJ='',resIA='';
+      // Determinar ganador de esta mano
+      if(cj&&ci){
+        if(cj.jer>ci.jer){resJ='ganadora';resIA='perdedora';}
+        else if(ci.jer>cj.jer){resIA='ganadora';resJ='perdedora';}
+        else{resJ='empate';resIA='empate';}
+      }
+      manosHtml+='<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">'+
+        '<div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;">M'+(m+1)+'</div>'+
+        '<div style="display:flex;gap:6px;align-items:center;">'+
+          (cj?htmlCartaMesa(cj,resJ):'<div style="width:44px;height:64px;border:2px dashed rgba(255,255,255,.1);border-radius:6px;"></div>')+
+          '<span style="color:rgba(255,255,255,.2);font-size:10px;">vs</span>'+
+          (ci?htmlCartaMesa(ci,resIA):'<div style="width:44px;height:64px;border:2px dashed rgba(255,255,255,.1);border-radius:6px;"></div>')+
+        '</div>'+
+      '</div>';
+    }
+  }
+
+  // Indicador manos ganadas
+  var resManosHtml='<div class="res-mano">';
+  for(var rm=0;rm<3;rm++){
+    var cls='rm-pip';
+    if(rm<G.manosGanadasJ)cls+=' j';
+    else if(rm<G.manosGanadasJ+G.manosEmpatadas)cls+=' empate';
+    resManosHtml+='<div class="'+cls+'">J</div>';
+  }
+  resManosHtml+='<div style="width:8px"></div>';
+  for(var ri=0;ri<3;ri++){
+    var cls2='rm-pip';
+    if(ri<G.manosGanadasIA)cls2+=' ia';
+    resManosHtml+='<div class="'+cls2+'">IA</div>';
+  }
+  resManosHtml+='</div>';
+
+  // Mis cartas
+  var misCartasHtml='';
+  G.cartasJ.forEach(function(c,i){
+    var jugada=G.jugadasJ.slice(0,G.manoActual+1).includes(i)||(G.fase==='fin_mano'&&G.jugadasJ.includes(i));
+    // Solo está jugada si aparece en jugadasJ en manos anteriores o la actual ya cerrada
+    var yaJugada=false;
+    for(var mm=0;mm<G.manoActual;mm++){if(G.jugadasJ[mm]===i)yaJugada=true;}
+    if(G.fase==='fin_mano'&&G.jugadasJ[G.manoActual]===i)yaJugada=true;
+    misCartasHtml+=htmlCarta(c,i,puedeJugar&&!yaJugada,yaJugada,false,false);
+  });
+
+  // Botones
+  var btns='';
+  if(G.trucoPendiente&&G.trucoCantadoPor==='ia'){
+    var txtQuiero=G.estadoTruco===1?'Quiero ('+trucoPts(G.estadoTruco)+')':G.estadoTruco===2?'Quiero ('+trucoPts(G.estadoTruco)+')':'Quiero (4)';
+    btns+='<button class="btn-accion btn-quiero" onclick="responderTruco(true)">✓ '+txtQuiero+'</button>';
+    btns+='<button class="btn-accion btn-noquiero" onclick="responderTruco(false)">✗ No quiero</button>';
+    if(G.estadoTruco<3){
+      var sig=G.estadoTruco===1?'Retruco':'Vale Cuatro';
+      btns+='<button class="btn-accion btn-truco" onclick="cantarTruco()">↑ '+sig+'</button>';
+    }
+  } else if(G.envidoPendiente&&G.envidoCantadoPor==='ia'){
+    btns+='<button class="btn-accion btn-quiero" onclick="responderEnvido(true)">✓ Quiero</button>';
+    btns+='<button class="btn-accion btn-noquiero" onclick="responderEnvido(false)">✗ No quiero</button>';
+    if(G.estadoEnvido<4){
+      btns+='<button class="btn-accion btn-envido" onclick="cantarEnvido(G.estadoEnvido+1)">↑ Más</button>';
+    }
+  } else if(G.fase==='jugando'&&miTurno){
+    if(G.estadoTruco===0){
+      btns+='<button class="btn-accion btn-truco" onclick="cantarTruco()">🗣 Truco</button>';
+    } else if(G.estadoTruco<3&&G.trucoCantadoPor==='ia'){
+      // ya manejado arriba
+    } else if(G.estadoTruco<3&&G.trucoCantadoPor==='j'){
+      var sigT=G.estadoTruco===1?'Retruco':'Vale Cuatro';
+      // No puede volver a cantar el mismo
+    }
+    if(!G.envidoJugado&&G.manoActual===0){
+      btns+='<button class="btn-accion btn-envido" onclick="cantarEnvido(1)">♦ Envido</button>';
+      btns+='<button class="btn-accion btn-envido" onclick="cantarEnvido(3)">♦ Real Envido</button>';
+      btns+='<button class="btn-accion btn-envido" onclick="cantarEnvido(4)">♦ Falta Envido</button>';
+    }
+    btns+='<button class="btn-accion btn-mazo" onclick="irAlMazo()">Ir al mazo</button>';
+  } else if(G.fase==='fin_mano'){
+    btns+='<button class="btn-accion btn-nueva" onclick="nuevaMano()">Siguiente mano →</button>';
+  }
+
+  // Estado canto pendiente
+  var cantoPendienteHtml='';
+  if(G.trucoPendiente){
+    var txts={1:'¡TRUCO!',2:'¡RE-TRUCO!',3:'¡VALE CUATRO!'};
+    cantoPendienteHtml='<div class="estado-canto">'+
+      '<div class="estado-canto-txt">'+txts[G.estadoTruco]+'</div>'+
+      '<div class="estado-canto-sub">'+(G.trucoCantadoPor==='ia'?'La IA cantó':'Vos cantaste')+' — ¿Qué respondés?</div>'+
+    '</div>';
+  } else if(G.envidoPendiente){
+    var txte={1:'ENVIDO',2:'ENVIDO ENVIDO',3:'REAL ENVIDO',4:'FALTA ENVIDO'};
+    cantoPendienteHtml='<div class="estado-canto">'+
+      '<div class="estado-canto-txt">¡'+txte[G.estadoEnvido]+'!</div>'+
+      '<div class="estado-canto-sub">'+(G.envidoCantadoPor==='ia'?'La IA cantó':'Vos cantaste')+' — ¿Qué respondés?</div>'+
+    '</div>';
+  }
+
+  // Score pips
+  var pipsJ='',pipsIA='';
+  for(var p=0;p<30;p++){
+    pipsJ+='<div class="score-pip'+(p<G.ptsJ?' on':'')+'"></div>';
+    pipsIA+='<div class="score-pip'+(p<G.ptsIA?' on':'')+'"></div>';
+  }
+
+  // Turno texto
+  var
