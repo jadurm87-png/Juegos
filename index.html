@@ -3,521 +3,423 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Truco Argentino</title>
+<title>Truco</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#1a472a;color:#fff;font-family:Arial,sans-serif;min-height:100vh;padding:16px;}
-h1{text-align:center;color:#c9a84c;font-size:1.8rem;margin-bottom:4px;}
-h2{text-align:center;color:#e8c97e;font-size:1rem;margin-bottom:20px;}
-.card{background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid rgba(201,168,76,0.3);}
-.card h3{color:#c9a84c;margin-bottom:10px;}
-.card p{font-size:13px;line-height:1.7;color:rgba(255,255,255,0.8);}
-.btn{display:block;width:100%;padding:14px;border-radius:8px;border:none;font-size:1rem;font-weight:700;cursor:pointer;margin-bottom:8px;font-family:Arial,sans-serif;}
-.btn-verde{background:#00C896;color:#fff;}
-.btn-rojo{background:#FF3B5C;color:#fff;}
-.btn-azul{background:#2D6BE4;color:#fff;}
-.btn-gris{background:#555;color:#fff;}
-.btn-oro{background:#c9a84c;color:#000;}
-.btn-trans{background:transparent;color:#c9a84c;border:2px solid #c9a84c;}
+body{background:#1a472a;color:#fff;font-family:Arial,sans-serif;padding:12px;}
+h1{text-align:center;color:#c9a84c;font-size:1.6rem;margin-bottom:16px;}
+.btn{display:block;width:100%;padding:14px;border-radius:8px;border:none;font-size:1rem;font-weight:700;cursor:pointer;margin-bottom:8px;color:#fff;background:#c9a84c;}
+.card{background:rgba(0,0,0,0.3);border-radius:10px;padding:14px;margin-bottom:10px;}
+.oculto{display:none;}
 .score{display:flex;justify-content:space-around;text-align:center;margin-bottom:12px;}
-.score-box{background:rgba(0,0,0,0.3);border-radius:8px;padding:10px 20px;}
-.score-num{font-size:2rem;font-weight:900;color:#c9a84c;}
-.score-lbl{font-size:11px;color:rgba(255,255,255,0.6);}
-.cartas{display:flex;gap:8px;justify-content:center;margin:10px 0;flex-wrap:wrap;}
-.carta{width:64px;height:90px;border-radius:8px;background:#fff8ee;border:2px solid #c9a84c;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 4px;cursor:pointer;transition:transform 0.2s;}
-.carta:active{transform:translateY(-10px);}
+.snum{font-size:2rem;font-weight:900;color:#c9a84c;}
+.slbl{font-size:11px;color:rgba(255,255,255,0.6);}
+.cartas{display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap;}
+.carta{width:60px;height:86px;border-radius:8px;background:#fff8ee;border:2px solid #c9a84c;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 3px;cursor:pointer;}
 .carta.dorso{background:repeating-linear-gradient(135deg,#2d6a4f,#2d6a4f 4px,#40916c 4px,#40916c 8px);border-color:rgba(201,168,76,0.4);}
-.carta.usada{opacity:0.4;cursor:not-allowed;}
-.cn{font-size:1.1rem;font-weight:900;}
-.cp{font-size:1.2rem;}
-.espada{color:#1a1a8b;}
-.basto{color:#1a6b1a;}
-.oro-c{color:#8b6b00;}
-.copa{color:#8b1a1a;}
-.mesa{display:flex;gap:16px;justify-content:center;align-items:center;min-height:70px;margin:8px 0;}
-.carta-mesa{width:50px;height:70px;border-radius:6px;background:#fff8ee;border:2px solid #c9a84c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
-.carta-mesa.gan{border-color:#ffd700;box-shadow:0 0 10px rgba(255,215,0,0.5);}
-.carta-mesa.per{opacity:0.4;}
-.log{background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;max-height:80px;overflow-y:auto;font-size:12px;line-height:1.6;}
-.log-j{color:#e8c97e;}
-.log-ia{color:#ff9999;}
-.log-ok{color:#7fff7f;font-weight:700;}
-.log-s{color:rgba(255,255,255,0.4);}
-.canto{text-align:center;background:rgba(0,0,0,0.4);border-radius:10px;padding:12px;margin:8px 0;border:2px solid #c9a84c;}
-.canto-txt{font-size:1.4rem;font-weight:900;color:#c9a84c;}
-.canto-sub{font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;}
-.manos-res{display:flex;gap:6px;justify-content:center;margin:6px 0;}
-.pip{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
-.pip-j{background:#c9a84c;border-color:#c9a84c;}
-.pip-ia{background:#FF3B5C;border-color:#FF3B5C;}
-.pip-e{background:rgba(255,255,255,0.2);}
+.carta.usada{opacity:0.35;pointer-events:none;}
+.cn{font-size:1rem;font-weight:900;}
+.cp{font-size:1.1rem;}
+.E{color:#00008b;}.B{color:#006400;}.O{color:#8b6900;}.C{color:#8b0000;}
+.mesa{display:flex;gap:12px;justify-content:center;min-height:60px;align-items:center;margin:8px 0;}
+.cm{width:48px;height:66px;border-radius:6px;background:#fff8ee;border:2px solid #c9a84c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.cm.g{border-color:gold;box-shadow:0 0 8px gold;}
+.cm.p{opacity:0.35;}
+.log{background:rgba(0,0,0,0.3);border-radius:8px;padding:8px;max-height:72px;overflow-y:auto;font-size:11px;line-height:1.6;margin-top:8px;}
+.lj{color:#e8c97e;}.li{color:#ff9999;}.lok{color:#7fff7f;font-weight:700;}.ls{color:rgba(255,255,255,0.4);}
+.canto{text-align:center;background:rgba(0,0,0,0.4);border-radius:10px;padding:10px;margin:8px 0;border:2px solid #c9a84c;}
+.ctxt{font-size:1.3rem;font-weight:900;color:#c9a84c;}
+.pip{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin:2px;}
+.pj{background:#c9a84c;border-color:#c9a84c;}
+.pi{background:#FF3B5C;border-color:#FF3B5C;}
 .turno{text-align:center;font-size:12px;font-weight:700;color:#e8c97e;margin:6px 0;}
-.sep{height:1px;background:rgba(255,255,255,0.1);margin:8px 0;}
-.hidden{display:none!important;}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:999;}
-.overlay-box{background:#1a472a;border-radius:16px;padding:24px;text-align:center;border:3px solid #c9a84c;width:90%;max-width:320px;}
-.overlay-emoji{font-size:3rem;margin-bottom:8px;}
-.overlay-title{font-size:1.5rem;font-weight:900;color:#c9a84c;margin-bottom:8px;}
-.overlay-sub{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:16px;}
-.jerarquia{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
-.jc{background:#fff8ee;border-radius:4px;padding:3px 7px;font-size:11px;font-weight:700;color:#1a1a1a;border:1px solid #c9a84c;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:999;}
+.ovbox{background:#1a472a;border-radius:16px;padding:24px;text-align:center;border:3px solid #c9a84c;width:88%;}
+.ovem{font-size:3rem;}.ovt{font-size:1.4rem;font-weight:900;color:#c9a84c;margin:8px 0;}.ovs{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:16px;}
 </style>
 </head>
 <body>
 
-<!-- PANTALLA INICIO -->
-<div id="inicio">
-  <h1>🃏 Truco</h1>
-  <h2>Argentino — vs IA</h2>
-
+<div id="P1">
+  <h1>🃏 Truco Argentino</h1>
   <div class="card">
-    <h3>Jerarquía de cartas</h3>
-    <div class="jerarquia">
-      <div class="jc">1⚔️</div><div class="jc">1🌿</div><div class="jc">7⚔️</div><div class="jc">7💰</div>
-      <div class="jc">3</div><div class="jc">2</div><div class="jc">1🏆/💰</div>
-      <div class="jc">12</div><div class="jc">11</div><div class="jc">10</div>
-      <div class="jc">7🏆/🌿</div><div class="jc">6</div><div class="jc">5</div><div class="jc">4</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Puntuación</h3>
-    <p>
-      <b>Truco:</b> 2 pts · Retruco: 3 · Vale 4: 4<br>
-      <b>Envido:</b> 2 pts · Real Envido: 3 · Falta: lo que falta<br>
-      <b>No quiero:</b> 1 menos al que cantó<br>
-      Primero en llegar a <b>30 puntos</b> gana.
+    <p style="font-size:13px;line-height:1.8;color:rgba(255,255,255,0.85);">
+      <b style="color:#c9a84c;">Jerarquía:</b> 1⚔️ &gt; 1🌿 &gt; 7⚔️ &gt; 7💰 &gt; 3 &gt; 2 &gt; 1(copa/oro) &gt; 12 &gt; 11 &gt; 10 &gt; 7(copa/basto) &gt; 6 &gt; 5 &gt; 4<br><br>
+      <b style="color:#c9a84c;">Puntos:</b> Truco=2 · Retruco=3 · Vale4=4<br>
+      Envido=2 · RealEnvido=3 · FaltaEnvido=lo que falta<br>
+      No quiero = 1 menos. Primero en 30 gana.
     </p>
   </div>
-
-  <button class="btn btn-oro" onclick="iniciarJuego()">¡ JUGAR !</button>
+  <button style="background:#c9a84c;color:#000;display:block;width:100%;padding:16px;border-radius:8px;border:none;font-size:1.1rem;font-weight:900;cursor:pointer;" onclick="arrancar()">¡ JUGAR !</button>
 </div>
 
-<!-- JUEGO -->
-<div id="juego" style="display:none">
-  <!-- Score -->
+<div id="P2" style="display:none;">
   <div class="score">
-    <div class="score-box">
-      <div class="score-num" id="pts-j">0</div>
-      <div class="score-lbl">Vos</div>
-    </div>
-    <div style="align-self:center;color:rgba(255,255,255,0.3);font-size:1.2rem;">–</div>
-    <div class="score-box">
-      <div class="score-num" id="pts-ia">0</div>
-      <div class="score-lbl">IA</div>
-    </div>
+    <div><div class="snum" id="SJ">0</div><div class="slbl">VOS</div></div>
+    <div style="align-self:center;color:rgba(255,255,255,0.3);">–</div>
+    <div><div class="snum" id="SI">0</div><div class="slbl">IA</div></div>
   </div>
-
-  <!-- Canto pendiente -->
-  <div class="canto hidden" id="canto-box">
-    <div class="canto-txt" id="canto-txt"></div>
-    <div class="canto-sub" id="canto-sub"></div>
-  </div>
-
-  <!-- Cartas IA -->
-  <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">IA</div>
-  <div class="cartas" id="cartas-ia"></div>
-
-  <div class="sep"></div>
-
-  <!-- Mesa -->
+  <div class="canto oculto" id="CBOX"><div class="ctxt" id="CTXT"></div><div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;" id="CSUB"></div></div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;margin-bottom:4px;">IA</div>
+  <div class="cartas" id="CIA"></div>
+  <hr style="border-color:rgba(255,255,255,0.1);margin:8px 0;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
     <span style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;">Mesa</span>
-    <span id="badge-mano" style="background:rgba(201,168,76,0.2);border:1px solid #c9a84c;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;color:#c9a84c;">Mano 1/3</span>
-    <span id="badge-es-mano" style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;"></span>
+    <span id="BMANO" style="font-size:10px;font-weight:700;color:#c9a84c;">Mano 1/3</span>
+    <span id="BESM" style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;text-transform:uppercase;"></span>
   </div>
-
-  <div class="manos-res" id="manos-res"></div>
-  <div class="mesa" id="mesa"></div>
-
-  <div class="sep"></div>
-
-  <!-- Mis cartas -->
-  <div class="turno" id="turno-txt">Tu turno</div>
-  <div class="cartas" id="cartas-j"></div>
-  <div style="font-size:11px;color:rgba(255,255,255,0.35);text-align:center;margin-top:4px;" id="pts-envido-txt"></div>
-
-  <!-- Botones -->
-  <div style="margin-top:12px;" id="btns"></div>
-
-  <!-- Log -->
-  <div class="log" id="log" style="margin-top:10px;"></div>
+  <div id="PIPS" style="text-align:center;margin:4px 0;"></div>
+  <div class="mesa" id="MESA"></div>
+  <hr style="border-color:rgba(255,255,255,0.1);margin:8px 0;">
+  <div class="turno" id="TURNO">Tu turno</div>
+  <div class="cartas" id="CJ"></div>
+  <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:4px;" id="ENV"></div>
+  <div style="margin-top:10px;" id="BTNS"></div>
+  <div class="log" id="LOG"></div>
 </div>
 
-<!-- Overlay fin -->
-<div class="overlay hidden" id="overlay">
-  <div class="overlay-box">
-    <div class="overlay-emoji" id="ov-em">🏆</div>
-    <div class="overlay-title" id="ov-tit">¡Ganaste!</div>
-    <div class="overlay-sub" id="ov-sub">Llegaste a 30 puntos</div>
-    <button class="btn btn-oro" onclick="iniciarJuego()">Jugar de nuevo</button>
+<div class="overlay" id="OV" style="display:none;">
+  <div class="ovbox">
+    <div class="ovem" id="OVEM">🏆</div>
+    <div class="ovt" id="OVT">¡Ganaste!</div>
+    <div class="ovs" id="OVS">Llegaste a 30 puntos</div>
+    <button style="background:#c9a84c;color:#000;display:block;width:100%;padding:14px;border-radius:8px;border:none;font-size:1rem;font-weight:900;cursor:pointer;" onclick="arrancar()">Jugar de nuevo</button>
   </div>
 </div>
 
 <script>
-var PALOS=['espada','basto','oro','copa'];
-var SIM={espada:'⚔️',basto:'🌿',oro:'💰',copa:'🏆'};
+var PS=['espada','basto','oro','copa'];
+var SM={espada:'⚔️',basto:'🌿',oro:'💰',copa:'🏆'};
+var PC={espada:'E',basto:'B',oro:'O',copa:'C'};
 
-function jer(n,p){
+function JR(n,p){
   if(n==1&&p=='espada')return 14;
   if(n==1&&p=='basto')return 13;
   if(n==7&&p=='espada')return 12;
   if(n==7&&p=='oro')return 11;
-  if(n==3)return 10;
-  if(n==2)return 9;
-  if(n==1)return 8;
-  if(n==12)return 7;
-  if(n==11)return 6;
-  if(n==10)return 5;
-  if(n==7)return 4;
-  if(n==6)return 3;
-  if(n==5)return 2;
-  if(n==4)return 1;
+  if(n==3)return 10; if(n==2)return 9; if(n==1)return 8;
+  if(n==12)return 7; if(n==11)return 6; if(n==10)return 5;
+  if(n==7)return 4; if(n==6)return 3; if(n==5)return 2; if(n==4)return 1;
   return 0;
 }
 
-function envVal(n){return n>=10?0:n;}
+function EV(n){return n>=10?0:n;}
 
-function calcEnv(cs){
+function CE(cs){
   var m=0;
   for(var i=0;i<cs.length;i++){
     for(var j=i+1;j<cs.length;j++){
-      if(cs[i].p==cs[j].p){var v=20+envVal(cs[i].n)+envVal(cs[j].n);if(v>m)m=v;}
+      if(cs[i].p==cs[j].p){var v=20+EV(cs[i].n)+EV(cs[j].n);if(v>m)m=v;}
     }
-    var s=envVal(cs[i].n);if(s>m)m=s;
+    var s=EV(cs[i].n);if(s>m)m=s;
   }
   return m;
 }
 
-function mazo(){
+function MZ(){
   var m=[];
   [1,2,3,4,5,6,7,10,11,12].forEach(function(n){
-    PALOS.forEach(function(p){m.push({n:n,p:p,j:jer(n,p)});});
+    PS.forEach(function(p){m.push({n:n,p:p,j:JR(n,p)});});
   });
-  for(var i=m.length-1;i>0;i--){var k=Math.floor(Math.random()*(i+1));var t=m[i];m[i]=m[k];m[k]=t;}
+  for(var i=m.length-1;i>0;i--){
+    var k=Math.floor(Math.random()*(i+1));
+    var t=m[i];m[i]=m[k];m[k]=t;
+  }
   return m;
 }
 
-var G={};
+var G={pj:0,pia:0,mano:0,turno:0,cj:[],cia:[],jj:[],jia:[],mgj:0,mgia:0,memp:0,ma:0,et:0,tc:null,tp:false,ee:0,ec:null,ep:false,ej:false,fase:'j'};
 
-function iniciarJuego(){
-  document.getElementById("inicio").style.display="none";
-  document.getElementById("juego").style.display="block";
-  document.getElementById("overlay").style.display="none";
-  G={
-    pj:0,pia:0,mano:0,turno:0,
-    cj:[],cia:[],
-    jj:[null,null,null],jia:[null,null,null],
-    mgj:0,mgia:0,memp:0,ma:0,
-    etruco:0,tcantado:null,tpend:false,
-    eenvido:0,ecantado:null,epend:false,ejugado:false,
-    fase:'jugando'
-  };
-  nuevaMano();
+function arrancar(){
+  document.getElementById('P1').style.display='none';
+  document.getElementById('P2').style.display='block';
+  document.getElementById('OV').style.display='none';
+  G.pj=0;G.pia=0;G.mano=0;
+  NM();
 }
 
-function nuevaMano(){
-  var m=mazo();
+function NM(){
+  var m=MZ();
   G.cj=m.slice(0,3);G.cia=m.slice(3,6);
   G.jj=[null,null,null];G.jia=[null,null,null];
   G.mgj=0;G.mgia=0;G.memp=0;G.ma=0;
-  G.etruco=0;G.tcantado=null;G.tpend=false;
-  G.eenvido=0;G.ecantado=null;G.epend=false;G.ejugado=false;
-  G.fase='jugando';
-  G.turno=G.mano;
-  render();
-  log('--- Nueva mano ---','s');
-  log('Tus cartas: '+G.cj.map(function(c){return c.n+c.p[0].toUpperCase();}).join(', '),'j');
-  if(G.turno==1)setTimeout(iaActuar,1000);
+  G.et=0;G.tc=null;G.tp=false;
+  G.ee=0;G.ec=null;G.ep=false;G.ej=false;
+  G.fase='j';G.turno=G.mano;
+  R();
+  lg('--- Nueva mano ---','ls');
+  lg('Tus cartas: '+G.cj.map(function(c){return c.n+PC[c.p];}).join(', '),'lj');
+  if(G.turno==1)setTimeout(IA,1000);
 }
 
-function paloClass(p){return p=='oro'?'oro-c':p;}
+function TP(e){return e==1?2:e==2?3:4;}
 
-function cartaHTML(c,idx,jugable,usada){
-  var pc=paloClass(c.p);
-  var click=jugable&&!usada?'onclick="jugar('+idx+')"':'';
-  return '<div class="carta'+(usada?' usada':'')+'" '+click+'>'+
-    '<span class="cn '+pc+'">'+c.n+'</span>'+
-    '<span class="cp">'+SIM[c.p]+'</span>'+
-    '<span class="cn '+pc+'" style="transform:rotate(180deg)">'+c.n+'</span>'+
-  '</div>';
+function EP(pj,pia,niv){
+  if(niv==1)return 2;if(niv==2)return 4;if(niv==3)return 3;
+  if(niv==4)return pj>pia?30-G.pj:30-G.pia;
+  return 2;
 }
 
-function cartaMesaHTML(c,cls){
-  var pc=paloClass(c.p);
-  return '<div class="carta-mesa '+(cls||'')+'">'+
-    '<span class="cn '+pc+'" style="font-size:.9rem;font-weight:900;">'+c.n+'</span>'+
-    '<span>'+SIM[c.p]+'</span>'+
-  '</div>';
+function lg(msg,cls){
+  var el=document.getElementById('LOG');
+  var d=document.createElement('div');
+  d.className=cls||'ls';d.textContent=msg;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
 }
 
-function render(){
-  // Score
-  document.getElementById('pts-j').textContent=G.pj;
-  document.getElementById('pts-ia').textContent=G.pia;
-  document.getElementById('badge-mano').textContent='Mano '+(G.ma+1)+'/3';
-  document.getElementById('badge-es-mano').textContent=G.mano==0?'Sos mano':'IA es mano';
+function R(){
+  document.getElementById('SJ').textContent=G.pj;
+  document.getElementById('SI').textContent=G.pia;
+  document.getElementById('BMANO').textContent='Mano '+(G.ma+1)+'/3';
+  document.getElementById('BESM').textContent=G.mano==0?'Sos mano':'IA mano';
 
-  // Cartas IA (siempre dorso)
-  var iaH='';
-  for(var i=0;i<G.cia.length;i++)iaH+='<div class="carta dorso"></div>';
-  document.getElementById('cartas-ia').innerHTML=iaH;
+  // IA cartas dorso
+  var ih='';for(var i=0;i<G.cia.length;i++)ih+='<div class="carta dorso"></div>';
+  document.getElementById('CIA').innerHTML=ih;
 
-  // Manos resultado
-  var mr='<div style="display:flex;gap:4px;align-items:center;">';
-  for(var r=0;r<3;r++){
-    var cls='pip';
-    if(r<G.mgj)cls+=' pip-j';
-    else if(r<G.mgj+G.memp)cls+=' pip-e';
-    mr+='<div class="'+cls+'">J</div>';
-  }
-  mr+='<div style="width:10px"></div>';
-  for(var s=0;s<3;s++){
-    var cls2='pip';
-    if(s<G.mgia)cls2+=' pip-ia';
-    mr+='<div class="'+cls2+'">IA</div>';
-  }
-  mr+='</div>';
-  document.getElementById('manos-res').innerHTML=mr;
+  // Pips
+  var pp='';
+  for(var r=0;r<3;r++){var c=r<G.mgj?'pip pj':'pip';pp+='<span class="'+c+'">J</span>';}
+  pp+='&nbsp;&nbsp;';
+  for(var s=0;s<3;s++){var c2=s<G.mgia?'pip pi':'pip';pp+='<span class="'+c2+'">IA</span>';}
+  document.getElementById('PIPS').innerHTML=pp;
 
   // Mesa
-  var mesaH='';
+  var mh='';
   for(var m=0;m<=Math.min(G.ma,2);m++){
     var cj=G.jj[m]!=null?G.cj[G.jj[m]]:null;
     var ci=G.jia[m]!=null?G.cia[G.jia[m]]:null;
     if(cj||ci){
       var rj='',ri='';
-      if(cj&&ci){
-        if(cj.j>ci.j){rj='gan';ri='per';}
-        else if(ci.j>cj.j){ri='gan';rj='per';}
-      }
-      mesaH+='<div style="text-align:center">'+
-        '<div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:4px;">M'+(m+1)+'</div>'+
-        '<div style="display:flex;gap:6px;align-items:center;">'+
-          (cj?cartaMesaHTML(cj,rj):'<div style="width:50px;height:70px;border:2px dashed rgba(255,255,255,.1);border-radius:6px;"></div>')+
-          '<span style="color:rgba(255,255,255,.2);font-size:10px;">vs</span>'+
-          (ci?cartaMesaHTML(ci,ri):'<div style="width:50px;height:70px;border:2px dashed rgba(255,255,255,.1);border-radius:6px;"></div>')+
-        '</div>'+
-      '</div>';
+      if(cj&&ci){if(cj.j>ci.j){rj='g';ri='p';}else if(ci.j>cj.j){ri='g';rj='p';}}
+      mh+='<div style="text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.3)">M'+(m+1)+'</div>'+
+        '<div style="display:flex;gap:4px;align-items:center;">'+
+        (cj?'<div class="cm '+(rj=='g'?'g':rj=='p'?'p':'')+'"><span class="cn '+PC[cj.p]+'" style="font-size:.85rem">'+cj.n+'</span><span>'+SM[cj.p]+'</span></div>':'<div style="width:48px;height:66px;border:2px dashed rgba(255,255,255,.1);border-radius:6px;"></div>')+
+        '<span style="color:rgba(255,255,255,.2);font-size:9px">vs</span>'+
+        (ci?'<div class="cm '+(ri=='g'?'g':ri=='p'?'p':'')+'"><span class="cn '+PC[ci.p]+'" style="font-size:.85rem">'+ci.n+'</span><span>'+SM[ci.p]+'</span></div>':'<div style="width:48px;height:66px;border:2px dashed rgba(255,255,255,.1);border-radius:6px;"></div>')+
+        '</div></div>';
     }
   }
-  document.getElementById('mesa').innerHTML=mesaH||'<span style="color:rgba(255,255,255,.2);font-size:12px;">Sin cartas jugadas</span>';
+  document.getElementById('MESA').innerHTML=mh||'<span style="color:rgba(255,255,255,.2);font-size:12px">Sin cartas</span>';
 
   // Mis cartas
-  var miTurno=G.turno==0&&!G.tpend&&!G.epend&&G.fase=='jugando';
-  var jH='';
+  var mt=G.turno==0&&!G.tp&&!G.ep&&G.fase=='j';
+  var jh='';
   G.cj.forEach(function(c,i){
-    var usada=false;
-    for(var x=0;x<G.ma;x++)if(G.jj[x]==i)usada=true;
-    if(G.fase=='fin_mano'&&G.jj[G.ma]==i)usada=true;
-    jH+=cartaHTML(c,i,miTurno&&!usada,usada);
+    var u=false;
+    for(var x=0;x<G.ma;x++)if(G.jj[x]==i)u=true;
+    if(G.fase=='f'&&G.jj[G.ma]==i)u=true;
+    var click=mt&&!u?'onclick="JC('+i+')"':'';
+    jh+='<div class="carta'+(u?' usada':'')+'" '+click+'>'+
+      '<span class="cn '+PC[c.p]+'">'+c.n+'</span>'+
+      '<span class="cp">'+SM[c.p]+'</span>'+
+      '<span class="cn '+PC[c.p]+'" style="transform:rotate(180deg)">'+c.n+'</span>'+
+    '</div>';
   });
-  document.getElementById('cartas-j').innerHTML=jH;
+  document.getElementById('CJ').innerHTML=jh;
+  document.getElementById('ENV').textContent=G.cj.length?'Tu envido: '+CE(G.cj)+' pts':'';
 
-  // Envido pts
-  document.getElementById('pts-envido-txt').textContent=G.cj.length?'Tu envido: '+calcEnv(G.cj)+' pts':'';
+  // Turno
+  var tt=G.tp||G.ep?'¡Respondé el canto!':mt?'Tu turno — tocá una carta':'Turno de la IA...';
+  var el=document.getElementById('TURNO');
+  el.textContent=tt;el.style.color=mt?'#e8c97e':'rgba(255,255,255,0.4)';
 
-  // Turno texto
-  var tt=G.tpend||G.epend?'¡Respondé el canto!':miTurno?'Tu turno — tocá una carta':'Turno de la IA...';
-  document.getElementById('turno-txt').textContent=tt;
-  document.getElementById('turno-txt').style.color=miTurno?'#e8c97e':'rgba(255,255,255,0.4)';
-
-  // Canto pendiente
-  var cb=document.getElementById('canto-box');
-  if(G.tpend||G.epend){
-    cb.classList.remove('hidden');
-    var txts={1:'¡TRUCO!',2:'¡RETRUCO!',3:'¡VALE CUATRO!',e1:'¡ENVIDO!',e3:'¡REAL ENVIDO!',e4:'¡FALTA ENVIDO!'};
-    var txt=G.tpend?txts[G.etruco]:(G.eenvido==1?txts.e1:G.eenvido==3?txts.e3:txts.e4);
-    document.getElementById('canto-txt').textContent=txt;
-    document.getElementById('canto-sub').textContent=(G.tpend?G.tcantado:G.ecantado)=='ia'?'La IA cantó — ¿Qué hacés?':'Vos cantaste — esperando respuesta...';
-  } else {
-    cb.classList.add('hidden');
-  }
+  // Canto
+  var cb=document.getElementById('CBOX');
+  if(G.tp||G.ep){
+    cb.style.display='block';
+    var txts={1:'¡TRUCO!',2:'¡RETRUCO!',3:'¡VALE CUATRO!'};
+    var txt=G.tp?txts[G.et]:(G.ee==1?'¡ENVIDO!':G.ee==3?'¡REAL ENVIDO!':'¡FALTA ENVIDO!');
+    document.getElementById('CTXT').textContent=txt;
+    document.getElementById('CSUB').textContent=(G.tp?G.tc:G.ec)=='ia'?'La IA cantó — ¿Qué hacés?':'Vos cantaste...';
+  } else {cb.style.display='none';}
 
   // Botones
   var btns='';
-  if(G.tpend&&G.tcantado=='ia'){
-    btns+='<button class="btn btn-verde" onclick="respT(true)">✓ Quiero ('+tPts(G.etruco)+' pts)</button>';
-    btns+='<button class="btn btn-gris" onclick="respT(false)">✗ No quiero</button>';
-    if(G.etruco<3)btns+='<button class="btn btn-rojo" onclick="cantarT()">'+(G.etruco==1?'↑ Retruco':'↑ Vale Cuatro')+'</button>';
-  } else if(G.epend&&G.ecantado=='ia'){
-    btns+='<button class="btn btn-verde" onclick="respE(true)">✓ Quiero</button>';
-    btns+='<button class="btn btn-gris" onclick="respE(false)">✗ No quiero</button>';
-  } else if(G.fase=='jugando'&&miTurno){
-    if(G.etruco==0)btns+='<button class="btn btn-rojo" onclick="cantarT()">🗣 Truco</button>';
-    if(!G.ejugado&&G.ma==0){
-      btns+='<button class="btn btn-azul" onclick="cantarE(1)">♦ Envido</button>';
-      btns+='<button class="btn btn-azul" onclick="cantarE(3)">♦ Real Envido</button>';
-      btns+='<button class="btn btn-azul" onclick="cantarE(4)">♦ Falta Envido</button>';
+  if(G.tp&&G.tc=='ia'){
+    btns+='<button style="background:#00C896;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="RT(true)">✓ Quiero ('+TP(G.et)+' pts)</button>';
+    btns+='<button style="background:#555;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="RT(false)">✗ No quiero</button>';
+    if(G.et<3)btns+='<button style="background:#FF3B5C;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="CT()">'+(G.et==1?'↑ Retruco':'↑ Vale Cuatro')+'</button>';
+  } else if(G.ep&&G.ec=='ia'){
+    btns+='<button style="background:#00C896;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="RE(true)">✓ Quiero</button>';
+    btns+='<button style="background:#555;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="RE(false)">✗ No quiero</button>';
+  } else if(G.fase=='j'&&mt){
+    if(G.et==0)btns+='<button style="background:#FF3B5C;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="CT()">🗣 Truco</button>';
+    if(!G.ej&&G.ma==0){
+      btns+='<button style="background:#2D6BE4;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="CE2(1)">♦ Envido</button>';
+      btns+='<button style="background:#2D6BE4;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="CE2(3)">♦ Real Envido</button>';
+      btns+='<button style="background:#2D6BE4;color:#fff;display:block;width:100%;padding:12px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="CE2(4)">♦ Falta Envido</button>';
     }
-    btns+='<button class="btn btn-trans" onclick="irMazo()">Ir al mazo</button>';
-  } else if(G.fase=='fin_mano'){
-    btns='<button class="btn btn-oro" onclick="nuevaMano()">Siguiente mano →</button>';
+    btns+='<button style="background:transparent;color:#c9a84c;display:block;width:100%;padding:12px;border-radius:8px;border:2px solid #c9a84c;font-size:.95rem;font-weight:700;margin-bottom:6px;" onclick="IM()">Ir al mazo</button>';
+  } else if(G.fase=='f'){
+    btns='<button style="background:#c9a84c;color:#000;display:block;width:100%;padding:14px;border-radius:8px;border:none;font-size:1rem;font-weight:900;" onclick="NM()">Siguiente mano →</button>';
   }
-  document.getElementById('btns').innerHTML=btns;
+  document.getElementById('BTNS').innerHTML=btns;
 }
 
-function log(msg,tipo){
-  var el=document.getElementById('log');
-  var d=document.createElement('div');
-  d.className='log-'+(tipo||'s');
-  d.textContent=msg;
-  el.appendChild(d);
-  el.scrollTop=el.scrollHeight;
-}
-
-function tPts(e){return e==1?2:e==2?3:4;}
-
-function jugar(idx){
-  if(G.turno!=0||G.tpend||G.epend||G.fase!='jugando')return;
+function JC(idx){
+  if(G.turno!=0||G.tp||G.ep||G.fase!='j')return;
   for(var m=0;m<G.ma;m++)if(G.jj[m]==idx)return;
   G.jj[G.ma]=idx;
-  log('Jugaste: '+G.cj[idx].n+' de '+G.cj[idx].p,'j');
-  render();
-  setTimeout(iaJugar,800);
+  lg('Jugaste: '+G.cj[idx].n+' de '+G.cj[idx].p,'lj');
+  R();setTimeout(IJ,800);
 }
 
-function iaJugar(){
-  var disp=[];
-  G.cia.forEach(function(c,i){
-    var u=false;for(var m=0;m<G.ma;m++)if(G.jia[m]==i)u=true;
-    if(!u)disp.push(i);
-  });
-  if(!disp.length)return;
+function IJ(){
+  var d=[];
+  G.cia.forEach(function(c,i){var u=false;for(var m=0;m<G.ma;m++)if(G.jia[m]==i)u=true;if(!u)d.push(i);});
+  if(!d.length)return;
   var cj=G.cj[G.jj[G.ma]];
-  var gana=disp.filter(function(i){return G.cia[i].j>cj.j;});
-  var elegida;
-  if(gana.length)elegida=gana.sort(function(a,b){return G.cia[a].j-G.cia[b].j;})[0];
-  else elegida=disp.sort(function(a,b){return G.cia[a].j-G.cia[b].j;})[0];
-  G.jia[G.ma]=elegida;
-  log('IA jugó: '+G.cia[elegida].n+' de '+G.cia[elegida].p,'ia');
-  render();
-  setTimeout(resolverMano,600);
+  var gn=d.filter(function(i){return G.cia[i].j>cj.j;});
+  var el;
+  if(gn.length)el=gn.sort(function(a,b){return G.cia[a].j-G.cia[b].j;})[0];
+  else el=d.sort(function(a,b){return G.cia[a].j-G.cia[b].j;})[0];
+  G.jia[G.ma]=el;
+  lg('IA jugó: '+G.cia[el].n+' de '+G.cia[el].p,'li');
+  R();setTimeout(RM,600);
 }
 
-function resolverMano(){
+function RM(){
   var cj=G.cj[G.jj[G.ma]];
   var ci=G.cia[G.jia[G.ma]];
-  var gan='';
-  if(cj.j>ci.j){G.mgj++;gan='j';log('¡Ganaste la mano '+(G.ma+1)+'!','ok');}
-  else if(ci.j>cj.j){G.mgia++;gan='ia';log('IA ganó la mano '+(G.ma+1),'ia');}
-  else{G.memp++;gan='emp';log('Mano '+(G.ma+1)+' empatada','s');}
+  var gn='';
+  if(cj.j>ci.j){G.mgj++;gn='j';lg('¡Ganaste la mano '+(G.ma+1)+'!','lok');}
+  else if(ci.j>cj.j){G.mgia++;gn='i';lg('IA ganó la mano '+(G.ma+1),'li');}
+  else{G.memp++;gn='e';lg('Mano '+(G.ma+1)+' empatada','ls');}
 
-  var fin=false,ganR=null;
-  if(G.mgj>=2){fin=true;ganR='j';}
-  else if(G.mgia>=2){fin=true;ganR='ia';}
-  else if(G.ma==2){
-    fin=true;
-    if(G.mgj>G.mgia)ganR='j';
-    else if(G.mgia>G.mgj)ganR='ia';
-    else ganR=G.mano==0?'j':'ia';
+  var fin=false,gr=null;
+  if(G.mgj>=2){fin=true;gr='j';}
+  else if(G.mgia>=2){fin=true;gr='i';}
+  else if(G.ma==2){fin=true;gr=G.mgj>G.mgia?'j':G.mgia>G.mgj?'i':G.mano==0?'j':'i';}
+
+  if(fin){G.fase='f';R();setTimeout(function(){FR(gr);},400);}
+  else{G.ma++;G.turno=gn=='j'?0:gn=='i'?1:G.mano;G.fase='j';R();if(G.turno==1)setTimeout(IA,1000);}
+}
+
+function FR(gn){
+  var pts=G.et==0?1:TP(G.et);
+  if(gn=='j'){G.pj+=pts;lg('¡Ganaste la ronda! +'+pts+' pts','lok');}
+  else{G.pia+=pts;lg('IA ganó la ronda. +'+pts+' pts','li');}
+  G.mano=1-G.mano;R();
+  if(G.pj>=30)FP('j');else if(G.pia>=30)FP('i');
+}
+
+function FP(gn){
+  document.getElementById('OVEM').textContent=gn=='j'?'🏆':'😔';
+  document.getElementById('OVT').textContent=gn=='j'?'¡Ganaste!':'La IA ganó';
+  document.getElementById('OVS').textContent=gn=='j'?'¡Sos un truquero!':'¡Revancha!';
+  document.getElementById('OV').style.display='flex';
+}
+
+function CT(){
+  if(G.et>=3)return;
+  G.et++;G.tc='j';G.tp=true;
+  lg('Cantaste: '+['','Truco','Retruco','Vale Cuatro'][G.et],'lj');
+  R();setTimeout(IAT,1200);
+}
+
+function IAT(){
+  var mx=Math.max.apply(null,G.cia.map(function(c){return c.j;}));
+  var ac=mx>=(G.et==3?11:9);
+  if(ac){
+    lg('IA: ¡Quiero!','li');
+    G.tp=false;G.tc=null;G.turno=1;G.fase='j';R();setTimeout(IJ,800);
+  } else if(G.et<3&&mx>=7){
+    G.et++;G.tc='ia';
+    lg('IA sube: ¡'+['','Truco','Retruco','Vale Cuatro'][G.et]+'!','li');R();
+  } else {
+    var p=G.et==1?1:G.et-1;
+    lg('IA: No quiero.','li');lg('Ganás '+p+' pt(s)','lok');
+    G.pj+=p;G.tp=false;G.et=0;G.fase='f';G.mano=1-G.mano;R();
+    if(G.pj>=30)FP('j');
   }
+}
 
-  if(fin){G.fase='fin_mano';render();setTimeout(function(){finRonda(ganR);},400);}
+function RT(q){
+  if(!G.tp||G.tc!='ia')return;
+  if(q){lg('¡Quiero!','lj');G.tp=false;G.tc=null;G.turno=0;G.fase='j';R();}
   else{
-    G.ma++;
-    G.turno=gan=='j'?0:gan=='ia'?1:G.mano;
-    G.fase='jugando';render();
-    if(G.turno==1)setTimeout(iaActuar,1000);
+    var p=G.et==1?1:G.et-1;
+    lg('No quiero.','lj');lg('IA gana '+p+' pt(s)','li');
+    G.pia+=p;G.tp=false;G.et=0;G.fase='f';G.mano=1-G.mano;R();
+    if(G.pia>=30)FP('i');
   }
 }
 
-function finRonda(gan){
-  var pts=G.etruco==0?1:tPts(G.etruco);
-  if(gan=='j'){G.pj+=pts;log('¡Ganaste la ronda! +'+pts+' pts','ok');}
-  else{G.pia+=pts;log('IA ganó la ronda. +'+pts+' pts','ia');}
-  G.mano=1-G.mano;
-  render();
-  if(G.pj>=30)finPartida('j');
-  else if(G.pia>=30)finPartida('ia');
+function CE2(niv){
+  if(G.ej||G.ma>0)return;
+  G.ee=niv;G.ec='j';G.ep=true;
+  lg('Cantaste: '+{1:'Envido',3:'Real Envido',4:'Falta Envido'}[niv],'lj');
+  R();setTimeout(IAE,1200);
 }
 
-function finPartida(gan){
-  document.getElementById('ov-em').textContent=gan=='j'?'🏆':'😔';
-  document.getElementById('ov-tit').textContent=gan=='j'?'¡Ganaste!':'La IA ganó';
-  document.getElementById('ov-sub').textContent=gan=='j'?'¡Sos un truquero!':'¡Revancha!';
-  document.getElementById("overlay").style.display="flex";
-}
-
-function cantarT(){
-  if(G.etruco>=3)return;
-  G.etruco++;G.tcantado='j';G.tpend=true;
-  log('Cantaste: '+['','Truco','Retruco','Vale Cuatro'][G.etruco],'j');
-  render();
-  setTimeout(iaRespT,1200);
-}
-
-function iaRespT(){
-  var mej=Math.max.apply(null,G.cia.map(function(c){return c.j;}));
-  var acepta=mej>=9;
-  if(G.etruco==3)acepta=mej>=11;
-  if(acepta){
-    log('IA: ¡Quiero!','ia');
-    G.tpend=false;G.tcantado=null;G.turno=1;G.fase='jugando';
-    render();setTimeout(iaJugar,800);
-  } else if(G.etruco<3&&mej>=7){
-    G.etruco++;G.tcantado='ia';
-    log('IA sube: ¡'+['','Truco','Retruco','Vale Cuatro'][G.etruco]+'!','ia');
-    render();
+function IAE(){
+  var pia=CE(G.cia);
+  var ac=pia>=(G.ee==4?26:23);
+  if(ac){
+    var pj=CE(G.cj);
+    lg('IA: ¡Quiero! IA='+pia+' Vos='+pj,'li');
+    G.ep=false;G.ej=true;
+    var pts=EP(pj,pia,G.ee);
+    if(pj>pia){G.pj+=pts;lg('¡Ganaste el envido! +'+pts,'lok');}
+    else if(pia>pj){G.pia+=pts;lg('IA ganó el envido. +'+pts,'li');}
+    else{G.pj+=pts;lg('Empate — gana el mano! +'+pts,'lok');}
+    G.turno=0;G.fase='j';R();
+    if(G.pj>=30)FP('j');else if(G.pia>=30)FP('i');
   } else {
-    log('IA: No quiero.','ia');
-    G.pj+=G.etruco==1?1:G.etruco-1;
-    log('Ganás '+(G.etruco==1?1:G.etruco-1)+' pt(s)','ok');
-    G.tpend=false;G.etruco=0;G.fase='fin_mano';G.mano=1-G.mano;
-    render();
-    if(G.pj>=30)finPartida('j');
+    var nq=G.ee==1?1:2;
+    lg('IA: No quiero.','li');lg('Ganás '+nq+' pt(s)','lok');
+    G.pj+=nq;G.ep=false;G.ej=true;G.turno=0;G.fase='j';R();
+    if(G.pj>=30)FP('j');
   }
 }
 
-function respT(q){
-  if(!G.tpend||G.tcantado!='ia')return;
+function RE(q){
+  if(!G.ep||G.ec!='ia')return;
+  var pj=CE(G.cj),pia=CE(G.cia);
   if(q){
-    log('¡Quiero!','j');
-    G.tpend=false;G.tcantado=null;G.turno=0;G.fase='jugando';render();
+    lg('¡Quiero! Vos='+pj+' IA='+pia,'lj');
+    G.ep=false;G.ej=true;
+    var pts=EP(pj,pia,G.ee);
+    if(pj>pia){G.pj+=pts;lg('¡Ganaste! +'+pts,'lok');}
+    else if(pia>pj){G.pia+=pts;lg('IA ganó. +'+pts,'li');}
+    else{G.pj+=pts;lg('Empate mano gana! +'+pts,'lok');}
+    G.turno=0;G.fase='j';R();
+    if(G.pj>=30)FP('j');else if(G.pia>=30)FP('i');
   } else {
-    log('No quiero.','j');
-    G.pia+=G.etruco==1?1:G.etruco-1;
-    log('IA gana '+(G.etruco==1?1:G.etruco-1)+' pt(s)','ia');
-    G.tpend=false;G.etruco=0;G.fase='fin_mano';G.mano=1-G.mano;
-    render();if(G.pia>=30)finPartida('ia');
+    var nq=G.ee==1?1:2;
+    lg('No quiero.','lj');G.pia+=nq;lg('IA gana '+nq+' pt(s)','li');
+    G.ep=false;G.ej=true;G.turno=0;G.fase='j';R();
+    if(G.pia>=30)FP('i');
   }
 }
 
-function cantarE(niv){
-  if(G.ejugado||G.ma>0)return;
-  G.eenvido=niv;G.ecantado='j';G.epend=true;
-  log('Cantaste: '+{1:'Envido',3:'Real Envido',4:'Falta Envido'}[niv],'j');
-  render();setTimeout(iaRespE,1200);
-}
-
-function iaRespE(){
-  var pia=calcEnv(G.cia);
-  var acepta=pia>=(G.eenvido==4?26:23);
-  if(acepta){
-    var pj=calcEnv(G.cj);
-    log('IA: ¡Quiero! ('+pia+' vs '+pj+')','ia');
-    G.epend=false;G.ejugado=true;
-    var pts=ePts(pj,pia,G.eenvido);
-    if(pj>pia){G.pj+=pts;log('¡Ganaste el envido! +'+pts+' pts','ok');}
-    else if(pia>pj){G.pia+=pts;log('IA ganó el envido. +'+pts+' pts','ia');}
-    else{G.pj+=pts;log('Empate — gana el mano! +'+pts+' pts','ok');}
-    G.turno=0;G.fase='jugando';render();
-    if(G.pj>=30)finPartida('j');else if(G.pia>=30)finPartida('ia');
-  } else {
-    var noq=G.eenvido==1?1:2;
-    log('IA: No quiero.','ia');
-    G.pj+=noq;log('Ganás '+noq+' pt(s)','ok');
-    G.epend=false;G.ejugado=true;G.turno=0;G.fase='jugando';render();
-    if(G.pj>=30)finPartida('j');
+function IA(){
+  if(G.turno!=1||G.fase!='j'||G.tp||G.ep)return;
+  var mx=Math.max.apply(null,G.cia.map(function(c){return c.j;}));
+  var env=CE(G.cia);
+  if(!G.ej&&G.ma==0&&env>=25&&Math.random()>.3){
+    G.ee=env>=27?3:1;G.ec='ia';G.ep=true;
+    lg('IA canta: ¡'+{1:'Envido',3:'Real Envido'}[G.ee]+'!','li');R();return;
   }
+  if(G.et==0&&mx>=10&&Math.random()>.4){
+    G.et=1;G.tc='ia';G.tp=true;lg('IA canta: ¡Truco!','li');R();return;
+  }
+  var d=[];
+  G.cia.forEach(function(c,i){var u=false;for(var m=0;m<G.ma;m++)if(G.jia[m]==i)u=true;if(!u)d.push(i);});
+  if(!d.length)return;
+  var el=d.sort(function(a,b){return G.mano==1?G.cia[b].j-G.cia[a].j:G.cia[a].j-G.cia[b].j;})[0];
+  G.jia[G.ma]=el;
+  lg('IA jugó: '+G.cia[el].n+' de '+G.cia[el].p,'li');
+  G.turno=0;R();
 }
 
-function respE(q){
-  if(!G.epend||G.ecantado!='ia')return;
-  var pj=calcEnv(G.cj),pia=calcEnv(G.cia);
-  if(q){
-    log('¡Quiero! ('+pj+' vs '+pia+')','j');
-    G.epend=false;G.ejugado=true;
-    var pts=ePts(pj,pia,G.eenvido);
-    if(pj>pia){G.pj+=pts;log('¡Ganaste! +'+pts+' pts','ok');}
-    else if(pia>p
+function IM(){
+  lg('Fuiste al mazo.','lj');
+  G.pia+=G.et==0?1:TP(G.et);
+  G.mano=1-G.mano;G.fase='f';R();
+  if(G.pia>=30)FP('i');
+}
+</script>
+</body>
+</html>
