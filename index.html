@@ -94,7 +94,7 @@ h2{text-align:center;color:#e8c97e;font-size:1rem;margin-bottom:20px;}
 </div>
 
 <!-- JUEGO -->
-<div id="juego" class="hidden">
+<div id="juego" style="display:none">
   <!-- Score -->
   <div class="score">
     <div class="score-box">
@@ -201,9 +201,9 @@ function mazo(){
 var G={};
 
 function iniciarJuego(){
-  document.getElementById('inicio').classList.add('hidden');
-  document.getElementById('juego').classList.remove('hidden');
-  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById("inicio").style.display="none";
+  document.getElementById("juego").style.display="block";
+  document.getElementById("overlay").style.display="none";
   G={
     pj:0,pia:0,mano:0,turno:0,
     cj:[],cia:[],
@@ -436,7 +436,7 @@ function finPartida(gan){
   document.getElementById('ov-em').textContent=gan=='j'?'🏆':'😔';
   document.getElementById('ov-tit').textContent=gan=='j'?'¡Ganaste!':'La IA ganó';
   document.getElementById('ov-sub').textContent=gan=='j'?'¡Sos un truquero!':'¡Revancha!';
-  document.getElementById('overlay').classList.remove('hidden');
+  document.getElementById("overlay").style.display="flex";
 }
 
 function cantarT(){
@@ -520,4 +520,4 @@ function respE(q){
     G.epend=false;G.ejugado=true;
     var pts=ePts(pj,pia,G.eenvido);
     if(pj>pia){G.pj+=pts;log('¡Ganaste! +'+pts+' pts','ok');}
-    el
+    else if(pia>p
